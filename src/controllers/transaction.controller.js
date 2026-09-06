@@ -25,11 +25,11 @@ async function createTransaction(req, res) {
    /**
     * 1. Validate request
     */
-   const {fromAccount, toAccount, amount, idempotenceKey } = req.body;
+   const {fromAccount, toAccount, amount, idempotencyKey } = req.body;
 
-    if( !fromAccount || !toAccount || !amount || !idempotenceKey ) {
+    if( !fromAccount || !toAccount || !amount || !idempotencyKey ) {
           return res.status(400).json({ 
-            message: 'fromAccount , toAccount , amount , and idempotenceKey are required',
+            message: 'fromAccount , toAccount , amount , and idempotencyKey are required',
             
          })
     }
@@ -50,11 +50,11 @@ async function createTransaction(req, res) {
 
 
     /**
-     * 2. Validate Idempotence Key
+     * 2. Validate Idempotency Key
      */
 
     const isTransactionAlreadyExists = await transactinModel.findOne({
-      idempotenceKey: idempotenceKey
+      idempotencyKey: idempotencyKey
     })
 
     if(isTransactionAlreadyExists) {
@@ -172,11 +172,11 @@ async function createTransaction(req, res) {
 
 
 async function createInitialFundsTransaction(req, res) {
-  const { toAccount, amount, idempotenceKey } = req.body;
+  const { toAccount, amount, idempotencyKey } = req.body;
 
-  if( !toAccount || !amount || !idempotenceKey ) {
+  if( !toAccount || !amount || !idempotencyKey ) {
     return res.status(400).json({ 
-      message: 'toAccount , amount , and idempotenceKey are required',
+      message: 'toAccount , amount , and idempotencyKey are required',
    })
   }
 
@@ -201,6 +201,43 @@ if(!fromUserAccount) {
   })
 }
 
+
+const session = await mongoose.startSession();
+session.startTransaction();
+
+const transaction = await transactinModel.create({
+  fromAccount: fromUserAccount._id,
+  toAccount,
+  amount,
+  idempotenceKey,
+  status: 'PENDING' 
+}, { session })
+
+
+const debitLedgerEntry = await ledgerModel.create({
+  account: fromUserAccount._id,
+  type: 'DEBIT',
+  amount: amount,
+  transaction: transaction._id
+}, { session })
+
+const creditLedgerEntry = await ledgerModel.create({
+  account: toAccount,
+  type: 'CREDIT',
+  amount: amount,
+  transaction: transaction._id  
+}, { session })
+
+transaction.status = 'COMPLETED';
+await transaction.save({ session })
+
+await session.commitTransaction();
+session.endSession();
+
+return  res.status(201).json({
+  message: "Initial funds transaction completed successfully",
+  transaction: transaction
+})
 
 
 }
