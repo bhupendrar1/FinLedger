@@ -40,7 +40,15 @@ async function authSystemUserMiddleware(req, res, next) {
     try{
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        const user = await userModel.findById(decoded.userId).system("+systemUser");
+        const user = await userModel
+    .findById(decoded.userId)
+    .select('+systemUser');
+
+    if (!user) {
+            return res.status(401).json({
+                message: 'User not found.'
+            });
+        }
 
        if(!user.systemUser) {
             return res.status(403).json({ 
@@ -49,9 +57,11 @@ async function authSystemUserMiddleware(req, res, next) {
        }
 
        req.user = user;
-      return  next();
+      return next();
     }
     catch (error) {
+     console.error('System auth error', error);
+         
         return res.status(400).json({ 
             message: 'Invalid token.' 
         });

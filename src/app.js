@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 //use routes
 app.use('/api/auth', authRoutes);
-app.use('/api/account', accountRoutes);
+app.use('/api/accounts', accountRoutes);
 app.use('/api/transactions', transactionRoutes);
 
 

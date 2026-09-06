@@ -65,7 +65,7 @@ const accountSchema = new mongoose.Schema({
     }
    ])
 
-   if(balanceData.length > 0) {
+   if(balanceData.length === 0) {
     return 0
    }
 
@@ -77,4 +77,4 @@ const accountSchema = new mongoose.Schema({
 const accountModel = mongoose.model('account', accountSchema);
 
 
-    module.exports = accountModel;
+module.exports = accountModel;
