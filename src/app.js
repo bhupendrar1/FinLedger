@@ -1,28 +1,31 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
+const express = require("express")
+const cookieParser = require("cookie-parser")
 
 
 
-// Importing routes
-const accountRoutes = require('./routes/account.routes');
-const authRoutes = require('./routes/auth.routes');
-const transactionRoutes = require('./routes/transaction.routes');
+const app = express()
 
 
+app.use(express.json())
+app.use(cookieParser())
 
-const app = express();
+/**
+ * - Routes required
+ */
+const authRouter = require("./routes/auth.routes")
+const accountRouter = require("./routes/account.routes")
+const transactionRoutes = require("./routes/transaction.routes")
 
-app.use(express.json());
-app.use(cookieParser());      
+/**
+ * - Use Routes
+ */
 
+app.get("/", (req, res) => {
+    res.send("Ledger Service is up and running")
+})
 
+app.use("/api/auth", authRouter)
+app.use("/api/accounts", accountRouter)
+app.use("/api/transactions", transactionRoutes)
 
-//use routes
-app.use('/api/auth', authRoutes);
-app.use('/api/accounts', accountRoutes);
-app.use('/api/transactions', transactionRoutes);
-
-
-
-
-module.exports = app;
+module.exports = app

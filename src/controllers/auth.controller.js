@@ -1,140 +1,119 @@
-const userModel = require('../models/user.model');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const emailService = require('../services/email.service');
-const tokenBlackListModel = require('../models/blacklist.model');
-
-
+const userModel = require("../models/user.model")
+const jwt = require("jsonwebtoken")
+const emailService = require("../services/email.service")
+const blackListModel = require("../models/blacklist.model")
 
 /**
- * - User Registration Controller
- * - POST: /api/auth/register 
- */
-async function UserRegisterController(req, res) {
+* - user register controller
+* - POST /api/auth/register
+*/
+async function userRegisterController(req, res) {
+    const { email, password, name } = req.body
 
-    const { email, name, password } = req.body;
-
-    // Check if the email already exists in the database
-    const isExists = await userModel.findOne({ 
-        email: email 
-    });
+    const isExists = await userModel.findOne({
+        email: email
+    })
 
     if (isExists) {
-        return res.status(422).json({ 
-            message: 'Email already exists',
-            status: "Failed"
-        });
+        return res.status(422).json({
+            message: "User already exists with email.",
+            status: "failed"
+        })
     }
 
-    // Create a new user
     const user = await userModel.create({
-        email,
-        name,
-        password
-    });
+       name,
+    email,
+    password
+    })
 
-    // Generate a JWT token for the registered user
-    const token = jwt.sign(
-        { userId:user._id },
-         process.env.JWT_SECRET,
-        { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "3d" })
 
-        res.cookie('token', token);
+    res.cookie("token", token)
 
     res.status(201).json({
-         message: 'User registered successfully',
-          user: {
-           _id: user._id,
-           email: user.email,
-           name: user.name
-          },
-          token
-         });
+        user: {
+            _id: user._id,
+            email: user.email,
+            name: user.name
+        },
+        token
+    })
 
-         await emailService.SendRegistrationEmail(user.email, user.name);
+    await emailService.sendRegistrationEmail(user.email, user.name)
 }
-
 
 /**
  * - User Login Controller
- * - POST: /api/auth/login 
- */
+ * - POST /api/auth/login
+  */
 
-async function UserLoginController(req, res) {
-    
-    const { email , password } = req.body;
+async function userLoginController(req, res) {
+    const { email, password } = req.body
 
-    const user = await userModel.findOne(
-        { email }).select('+password');
+    const user = await userModel.findOne({ email }).select("+password")
 
-        if(!user) {
-            return res.status(401).json({
-                message: 'Invalid email or password',
-            });
-        }
+    if (!user) {
+        return res.status(401).json({
+            message: "Email or password is INVALID"
+        })
+    }
 
-         const isValidPassword = await user.comparePassword(password);
-         
-        if(!isValidPassword) {
-            return res.status(401).json({
-                message: 'Invalid email or password',
-            });
-        }
+    const isValidPassword = await user.comparePassword(password)
 
+    if (!isValidPassword) {
+        return res.status(401).json({
+            message: "Email or password is INVALID"
+        })
+    }
 
-        // Generate a JWT token for the logged-in user
-        const token = jwt.sign(
-            { userId:user._id },
-             process.env.JWT_SECRET,
-            { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "3d" })
 
-            res.cookie('token', token);
+    res.cookie("token", token)
 
-        res.status(200).json({
-             message: 'User logged in successfully',
-              user: {
-               _id: user._id,
-               email: user.email,
-               name: user.name
-              },
-              token
-             });
+    res.status(200).json({
+        user: {
+            _id: user._id,
+            email: user.email,
+            name: user.name
+        },
+        token
+    })
+
 }
 
 
 /**
  * - User Logout Controller
- * - POST: /api/auth/logout
- */
-
-async function UserLogoutController(req, res) {
-    
-    const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+ * - POST /api/auth/logout
+  */
+async function userLogoutController(req, res) {
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[ 1 ]
 
     if (!token) {
         return res.status(200).json({
-            message: 'user logout successfully',
-        });
+            message: "User logged out successfully"
+        })
     }
 
-   
 
-    await tokenBlackListModel.create({ 
+
+
+    await blackListModel.create({
         token: token
-    });
+    })
 
-     res.clearCookie("token")
+    res.clearCookie("token")
 
     res.status(200).json({
-        message: 'User logged out successfully',
-    });
-
+        message: "User logged out successfully"
+    })
 
 }
 
 
-module.exports = { 
-    UserRegisterController,
-    UserLoginController,
-    UserLogoutController
- };
+module.exports = {
+    userRegisterController,
+    userLoginController,
+    userLogoutController
+}

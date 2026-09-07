@@ -113,7 +113,7 @@ async function createTransaction(req, res) {
         const session = await mongoose.startSession()
         session.startTransaction()
 
-        const transaction = (await transactionModel.create([ {
+        transaction = (await transactionModel.create([ {
             fromAccount,
             toAccount,
             amount,
@@ -153,6 +153,7 @@ async function createTransaction(req, res) {
         return res.status(400).json({
             message: "Transaction is Pending due to some issue, please retry after sometime",
         })
+
     }
     /**
      * 10. Send email notification

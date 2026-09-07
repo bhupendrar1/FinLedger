@@ -1,34 +1,33 @@
-const express = require('express');
-const authMiddleware = require('../middlewares/auth.middleware')
-const accountController = require('../controllers/account.controller');
+const express = require("express")
+const authMiddleware = require("../middlewares/auth.middleware")
+const accountController = require("../controllers/account.controller")
 
 
-const router = express.Router();
-
-
-/**
- * // post - /api/accounts/
- * - create a new account 
- */
-router.post('/', authMiddleware.authMiddleware, accountController.createAccountController);
+const router = express.Router()
 
 
 
 /**
- * GET /api/accounts/
- * - Get all accounts of the logged - in user
- * - protected route
+ * - POST /api/accounts/
+ * - Create a new account
+ * - Protected Route
  */
+router.post("/", authMiddleware.authMiddleware, accountController.createAccountController)
 
-router.get('/', authMiddleware.authMiddleware, accountController.getUserAccountsController);
 
 /**
- * GET /api/accounts/balance/:accountId
- * - Get the balance of a specific account by accountId
- * - protected route
+ * - GET /api/accounts/
+ * - Get all accounts of the logged-in user
+ * - Protected Route
  */
+router.get("/", authMiddleware.authMiddleware, accountController.getUserAccountsController)
 
 
-router.get('/balance/:accountId', authMiddleware.authMiddleware, accountController.getAccountBalanceController);
+/**
+ * - GET /api/accounts/balance/:accountId
+ */
+router.get("/balance/:accountId", authMiddleware.authMiddleware, accountController.getAccountBalanceController)
 
-module.exports = router;
+
+
+module.exports = router
