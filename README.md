@@ -1,4 +1,4 @@
-# 🏦 Banking Transaction System
+# 🏦 FinLedger — Secure Financial Transaction Platform
 
 <p align="center">
   <strong>A backend ledger-based banking API built with Node.js, Express.js and MongoDB.</strong>
@@ -18,7 +18,7 @@
 
 ## 📌 Project Brief
 
-**Banking Transaction System** is a backend-focused banking and ledger management application developed using **Node.js, Express.js and MongoDB**.
+**FinLedger — Secure Financial Transaction Platform** is a backend-focused banking and ledger management application developed using **Node.js, Express.js and MongoDB**.
 
 The project demonstrates how a banking backend can manage users, accounts, transactions and balances while maintaining transaction records through a **ledger-based accounting model** instead of storing a mutable balance directly on an account.
 
