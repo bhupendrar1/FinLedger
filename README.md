@@ -1,4 +1,4 @@
-# 🏦 FinLedger — Secure Financial Transaction Platform
+🏦 FinLedger — Secure Financial Transaction Platform
 
 <p align="center">
   <strong>A backend ledger-based banking API built with Node.js, Express.js and MongoDB.</strong>
@@ -14,55 +14,65 @@
   <img src="https://img.shields.io/badge/License-ISC-blue" alt="ISC License" />
 </p>
 
----
+📌 Project Brief
 
-## 📌 Project Brief
+FinLedger — Secure Financial Transaction Platform is a backend-focused banking and ledger management application developed using Node.js, Express.js and MongoDB.
 
-**FinLedger — Secure Financial Transaction Platform** is a backend-focused banking and ledger management application developed using **Node.js, Express.js and MongoDB**.
-
-The project demonstrates how a banking backend can manage users, accounts, transactions and balances while maintaining transaction records through a **ledger-based accounting model** instead of storing a mutable balance directly on an account.
+The project demonstrates how a banking backend can manage users, accounts, transactions and balances while maintaining transaction records through a ledger-based accounting model instead of storing a mutable balance directly on an account.
 
 The system provides REST APIs for:
 
-- User registration and authentication
-- JWT-based authorization
-- Account creation and account retrieval
-- Ledger-derived balance calculation
-- Account-to-account money transfers
-- Transaction status management
-- Idempotency protection against duplicate transfers
-- System-user controlled initial funding
-- Immutable ledger entries
-- Email notifications through Nodemailer and Gmail OAuth2
-- MongoDB transaction sessions for transfer processing
+User registration and authentication
 
-The main objective of the project is to build a backend that demonstrates **real-world banking concepts such as authentication, authorization, ledger accounting, transaction consistency, idempotency and auditability**.
+JWT-based authorization
 
----
+Account creation and account retrieval
 
-## 🎯 Problem Statement
+Ledger-derived balance calculation
+
+Account-to-account money transfers
+
+Transaction status management
+
+Idempotency protection against duplicate transfers
+
+System-user controlled initial funding
+
+Immutable ledger entries
+
+Email notifications through Nodemailer and Gmail OAuth2
+
+MongoDB transaction sessions for transfer processing
+
+The main objective of the project is to build a backend that demonstrates real-world banking concepts such as authentication, authorization, ledger accounting, transaction consistency, idempotency and auditability.
+
+🎯 Problem Statement
 
 A banking system cannot simply increase or decrease a user's balance whenever money moves. A reliable financial system needs to know:
 
-- Who owns an account?
-- Where did the money come from?
-- Where did the money go?
-- Which transaction created a balance change?
-- Can the same payment request accidentally be processed twice?
-- What happens when an account is frozen or closed?
-- Can historical ledger records be modified?
-- How can a balance be reconstructed from transaction records?
+Who owns an account?
 
-This project addresses these concerns by separating **accounts, transactions and ledger entries** and calculating account balances from the ledger.
+Where did the money come from?
 
----
+Where did the money go?
 
-## 💡 Core Idea
+Which transaction created a balance change?
+
+Can the same payment request accidentally be processed twice?
+
+What happens when an account is frozen or closed?
+
+Can historical ledger records be modified?
+
+How can a balance be reconstructed from transaction records?
+
+This project addresses these concerns by separating accounts, transactions and ledger entries and calculating account balances from the ledger.
+
+💡 Core Idea
 
 The system follows this simplified financial model:
 
-```text
-                    BANKING TRANSACTION SYSTEM
+                    FINLEDGER
 
  User
   │
@@ -90,55 +100,55 @@ Transaction
          ├── COMPLETED
          ├── FAILED
          └── REVERSED
-```
 
-### Balance Formula
+Balance Formula
 
 The account balance is derived from ledger entries:
 
-```text
              Total CREDIT
 Balance = -------------------
              Total DEBIT
 
 Actual formula:
 Balance = Total Credits - Total Debits
-```
 
 Example:
 
-```text
 CREDIT  ₹10,000
 CREDIT  ₹5,000
 DEBIT   ₹3,000
 DEBIT   ₹2,000
 ----------------
 Balance ₹10,000
-```
 
 This makes the ledger the source of truth for the account balance.
 
----
+✨ Features
 
-# ✨ Features
+👤 User Management
 
-## 👤 User Management
+User registration
 
-- User registration
-- User login
-- User logout
-- Unique email validation
-- Password hashing with bcryptjs
-- Password comparison during login
-- JWT generation
-- Authentication through cookies or Bearer token
-- Token blacklist after logout
+User login
 
-## 🔐 Authentication & Authorization
+User logout
+
+Unique email validation
+
+Password hashing with bcryptjs
+
+Password comparison during login
+
+JWT generation
+
+Authentication through cookies or Bearer token
+
+Token blacklist after logout
+
+🔐 Authentication & Authorization
 
 The application uses JWT for authentication.
 
-```text
 Login / Register
        ↓
 JWT Generated
@@ -154,61 +164,67 @@ Token Verification
 User Loaded
        ↓
 Controller
-```
 
-The system also has a separate authorization middleware for **system users**.
+The system also has a separate authorization middleware for system users.
 
-## 🏦 Account Management
+🏦 Account Management
 
 Authenticated users can:
 
-- Create an account
-- Retrieve their accounts
-- Check the balance of their own account
+Create an account
+
+Retrieve their accounts
+
+Check the balance of their own account
 
 Account statuses supported by the model:
 
-```text
 ACTIVE
 FROZEN
 CLOSED
-```
 
-Only `ACTIVE` accounts can participate in normal transfers.
+Only ACTIVE accounts can participate in normal transfers.
 
-## 💸 Transactions
+💸 Transactions
 
 The normal transfer API supports:
 
-- Source account
-- Destination account
-- Amount
-- Idempotency key
-- Account-status validation
-- Insufficient-balance validation
-- Transaction status
-- Debit ledger entry
-- Credit ledger entry
-- MongoDB session/transaction
-- Email notification
+Source account
 
-## 🔁 Idempotency
+Destination account
 
-Every transaction requires a unique `idempotencyKey`.
+Amount
+
+Idempotency key
+
+Account-status validation
+
+Insufficient-balance validation
+
+Transaction status
+
+Debit ledger entry
+
+Credit ledger entry
+
+MongoDB session/transaction
+
+Email notification
+
+🔁 Idempotency
+
+Every transaction requires a unique idempotencyKey.
 
 Example:
 
-```json
 {
   "idempotencyKey": "transfer-user1-001"
 }
-```
 
 If the same key has already been processed, the API checks the existing transaction status instead of blindly creating another transaction.
 
 This protects the system from accidental duplicate requests such as:
 
-```text
 User clicks Pay
        ↓
 Network delay
@@ -218,31 +234,30 @@ User clicks Pay again
 Same Idempotency Key
        ↓
 Existing transaction detected
-```
 
-## 📒 Immutable Ledger
+📒 Immutable Ledger
 
 Ledger entries represent financial movements as either:
 
-```text
 CREDIT
 DEBIT
-```
 
 Important ledger fields include:
 
-- Account
-- Amount
-- Transaction reference
-- Entry type
+Account
+
+Amount
+
+Transaction reference
+
+Entry type
 
 Ledger fields are designed to be immutable, and modification/deletion operations are explicitly blocked by middleware in the ledger model.
 
-## 🏛️ Initial Funds
+🏛️ Initial Funds
 
 A system-user protected endpoint can create an initial-funds transaction for an account.
 
-```text
 System User
      ↓
 System Account
@@ -252,40 +267,67 @@ DEBIT
 Destination Account
      ↓
 CREDIT
-```
 
-## 📧 Email Notifications
+📧 Email Notifications
 
 Nodemailer is integrated using Gmail OAuth2.
 
 Supported email operations include:
 
-- Registration/welcome email
-- Successful transaction email
-- Transaction failure email function
+Registration/welcome email
 
----
+Successful transaction email
 
-# 🛠️ Technology Stack
+Transaction failure email function
 
-| Technology | Role |
-|---|---|
-| Node.js | Server-side JavaScript runtime |
-| Express.js | REST API framework |
-| MongoDB | NoSQL database |
-| Mongoose | MongoDB ODM and schema management |
-| JSON Web Token | Authentication |
-| bcryptjs | Password hashing |
-| Nodemailer | Email service |
-| cookie-parser | Cookie handling |
-| dotenv | Environment configuration |
-| Nodemon | Development server reload |
+🛠️ Technology Stack
 
----
+Technology
 
-# 🏗️ Complete System Architecture
+Role
 
-```text
+Node.js
+
+Server-side JavaScript runtime
+
+Express.js
+
+REST API framework
+
+MongoDB
+
+NoSQL database
+
+Mongoose
+
+MongoDB ODM and schema management
+
+JSON Web Token
+
+Authentication
+
+bcryptjs
+
+Password hashing
+
+Nodemailer
+
+Email service
+
+cookie-parser
+
+Cookie handling
+
+dotenv
+
+Environment configuration
+
+Nodemon
+
+Development server reload
+
+🏗️ Complete System Architecture
+
                          ┌────────────────────────┐
                          │        CLIENT          │
                          │ Postman / Web Frontend │
@@ -333,14 +375,10 @@ Supported email operations include:
                          │      EMAIL SERVICE     │
                          │  Nodemailer / Gmail    │
                          └────────────────────────┘
-```
 
----
+📂 Complete Project File Structure
 
-# 📂 Complete Project File Structure
-
-```text
-Banking-Transaction-System-
+FinLedger
 │
 ├── src/
 │   │
@@ -376,28 +414,29 @@ Banking-Transaction-System-
 ├── package-lock.json
 ├── server.js
 └── README.md
-```
 
-> `node_modules/` is generated by `npm install` and should normally not be committed to Git.
+node_modules/ is generated by npm install and should normally not be committed to Git.
 
----
+📖 File-by-File Explanation
 
-# 📖 File-by-File Explanation
-
-## `server.js`
+server.js
 
 The main application entry point.
 
 Responsibilities:
 
-1. Load environment variables using `dotenv`.
-2. Import the Express application.
-3. Import the MongoDB connection function.
-4. Connect to MongoDB.
-5. Start the HTTP server.
-6. Listen on port `3000`.
+Load environment variables using dotenv.
 
-```text
+Import the Express application.
+
+Import the MongoDB connection function.
+
+Connect to MongoDB.
+
+Start the HTTP server.
+
+Listen on port 3000.
+
 server.js
    │
    ├── dotenv
@@ -405,41 +444,39 @@ server.js
    └── Express app
           ↓
        port 3000
-```
 
----
-
-## `src/app.js`
+src/app.js
 
 Creates and configures the Express application.
 
 Responsibilities include:
 
-- Creating the Express application
-- Enabling JSON request parsing
-- Enabling cookie parsing
-- Registering authentication routes
-- Registering account routes
-- Registering transaction routes
-- Providing the root health/status endpoint
+Creating the Express application
+
+Enabling JSON request parsing
+
+Enabling cookie parsing
+
+Registering authentication routes
+
+Registering account routes
+
+Registering transaction routes
+
+Providing the root health/status endpoint
 
 Route prefixes:
 
-```text
 /api/auth
 /api/accounts
 /api/transactions
-```
 
----
+⚙️ Configuration
 
-# ⚙️ Configuration
+src/config/db.js
 
-## `src/config/db.js`
+Responsible for connecting the application to MongoDB using the MONGODB_URI environment variable.
 
-Responsible for connecting the application to MongoDB using the `MONGODB_URI` environment variable.
-
-```text
 Application
      ↓
 connectToDB()
@@ -447,123 +484,190 @@ connectToDB()
 MONGODB_URI
      ↓
 MongoDB
-```
 
----
+👤 Models
 
-# 👤 Models
-
-## `src/models/user.model.js`
+src/models/user.model.js
 
 Defines the user schema.
 
 Main fields:
 
-| Field | Type | Purpose |
-|---|---|---|
-| `email` | String | Unique user email |
-| `name` | String | User name |
-| `password` | String | Hashed password |
-| `systemUser` | Boolean | System-user authorization flag |
+Field
+
+Type
+
+Purpose
+
+email
+
+String
+
+Unique user email
+
+name
+
+String
+
+User name
+
+password
+
+String
+
+Hashed password
+
+systemUser
+
+Boolean
+
+System-user authorization flag
 
 Important behavior:
 
-- Email is normalized to lowercase.
-- Email has a format check.
-- Email is unique.
-- Password is excluded from normal queries with `select: false`.
-- Password is hashed using bcryptjs before save.
-- `comparePassword()` compares a plain password with the stored hash.
+Email is normalized to lowercase.
 
----
+Email has a format check.
 
-## `src/models/account.model.js`
+Email is unique.
+
+Password is excluded from normal queries with select: false.
+
+Password is hashed using bcryptjs before save.
+
+comparePassword() compares a plain password with the stored hash.
+
+src/models/account.model.js
 
 Defines the bank account schema.
 
 Main fields:
 
-| Field | Type | Purpose |
-|---|---|---|
-| `user` | ObjectId | Account owner |
-| `status` | Enum | Account state |
-| `currency` | String | Account currency |
+Field
+
+Type
+
+Purpose
+
+user
+
+ObjectId
+
+Account owner
+
+status
+
+Enum
+
+Account state
+
+currency
+
+String
+
+Account currency
 
 Supported statuses:
 
-```text
 ACTIVE
 FROZEN
 CLOSED
-```
 
 The model provides:
 
-```javascript
 account.getBalance()
-```
 
 This method aggregates ledger entries and calculates:
 
-```text
 Total Credits - Total Debits
-```
 
----
-
-## `src/models/transaction.model.js`
+src/models/transaction.model.js
 
 Represents a money-transfer operation.
 
 Main fields:
 
-| Field | Type | Purpose |
-|---|---|---|
-| `fromAccount` | ObjectId | Sender account |
-| `toAccount` | ObjectId | Receiver account |
-| `status` | Enum | Transaction state |
-| `amount` | Number | Transfer amount |
-| `idempotencyKey` | String | Duplicate-request protection |
+Field
+
+Type
+
+Purpose
+
+fromAccount
+
+ObjectId
+
+Sender account
+
+toAccount
+
+ObjectId
+
+Receiver account
+
+status
+
+Enum
+
+Transaction state
+
+amount
+
+Number
+
+Transfer amount
+
+idempotencyKey
+
+String
+
+Duplicate-request protection
 
 Transaction states:
 
-```text
 PENDING
 COMPLETED
 FAILED
 REVERSED
-```
 
 The idempotency key is indexed and unique.
 
----
-
-## `src/models/ledger.model.js`
+src/models/ledger.model.js
 
 Represents individual financial movements.
 
 Fields:
 
-| Field | Purpose |
-|---|---|
-| `account` | Account affected by the entry |
-| `amount` | Amount of the ledger movement |
-| `transaction` | Related transaction |
-| `type` | `CREDIT` or `DEBIT` |
+Field
+
+Purpose
+
+account
+
+Account affected by the entry
+
+amount
+
+Amount of the ledger movement
+
+transaction
+
+Related transaction
+
+type
+
+CREDIT or DEBIT
 
 Ledger entries are intentionally immutable. Update and delete operations are blocked through Mongoose middleware.
 
 This is an important part of the project's accounting design because historical financial records should not be casually changed after creation.
 
----
-
-## `src/models/blacklist.model.js`
+src/models/blacklist.model.js
 
 Stores JWT tokens that have been invalidated during logout.
 
 Authentication middleware checks this collection before accepting a token.
 
-```text
 Logout
   ↓
 Token added to blacklist
@@ -575,19 +679,15 @@ Future request
 Blacklist check
   ↓
 401 Unauthorized
-```
 
----
+🎮 Controllers
 
-# 🎮 Controllers
-
-## `src/controllers/auth.controller.js`
+src/controllers/auth.controller.js
 
 Contains authentication business logic.
 
-### `userRegisterController`
+userRegisterController
 
-```text
 Request
  ↓
 Check existing email
@@ -603,11 +703,9 @@ Set cookie
 Return user + token
  ↓
 Send registration email
-```
 
-### `userLoginController`
+userLoginController
 
-```text
 Email + Password
        ↓
 Find user
@@ -621,11 +719,9 @@ Generate JWT
 Set cookie
        ↓
 Return authenticated user
-```
 
-### `userLogoutController`
+userLogoutController
 
-```text
 Get token
    ↓
 Store token in blacklist
@@ -633,35 +729,29 @@ Store token in blacklist
 Clear cookie
    ↓
 Logout response
-```
 
----
-
-## `src/controllers/account.controller.js`
+src/controllers/account.controller.js
 
 Contains account-related business logic.
 
-### `createAccountController`
+createAccountController
 
 Creates an account for the authenticated user.
 
-### `getUserAccountsController`
+getUserAccountsController
 
 Returns accounts belonging to the authenticated user.
 
-### `getAccountBalanceController`
+getAccountBalanceController
 
 Checks account ownership and calculates the balance from the ledger.
 
----
-
-## `src/controllers/transaction.controller.js`
+src/controllers/transaction.controller.js
 
 Contains the core financial transaction logic.
 
 The normal transaction implementation follows a documented 10-step flow:
 
-```text
 1. Validate request
 2. Validate idempotency key
 3. Check account status
@@ -672,253 +762,184 @@ The normal transaction implementation follows a documented 10-step flow:
 8. Mark transaction COMPLETED
 9. Commit MongoDB session
 10. Send email notification
-```
 
 The transfer uses a MongoDB session so the transaction and ledger writes are grouped into a database transaction.
 
----
+🛡️ Middleware
 
-# 🛡️ Middleware
-
-## `src/middlewares/auth.middleware.js`
+src/middlewares/auth.middleware.js
 
 Contains two authentication/authorization middleware functions.
 
-### `authMiddleware`
+authMiddleware
 
 Checks:
 
-1. Token exists.
-2. Token is not blacklisted.
-3. JWT signature is valid.
-4. User exists.
+Token exists.
+
+Token is not blacklisted.
+
+JWT signature is valid.
+
+User exists.
 
 Then attaches the authenticated user to:
 
-```javascript
 req.user
-```
 
-### `authSystemUserMiddleware`
+authSystemUserMiddleware
 
 Performs the same authentication checks and additionally verifies that the authenticated user has system-user privileges.
 
-Unauthorized system access returns HTTP `403`.
+Unauthorized system access returns HTTP 403.
 
----
+🛣️ Routes
 
-# 🛣️ Routes
+src/routes/auth.routes.js
 
-## `src/routes/auth.routes.js`
-
-```text
 POST /api/auth/register
 POST /api/auth/login
 POST /api/auth/logout
-```
 
-## `src/routes/account.routes.js`
+src/routes/account.routes.js
 
-```text
 POST /api/accounts/
 GET  /api/accounts/
 GET  /api/accounts/balance/:accountId
-```
 
-## `src/routes/transaction.routes.js`
+src/routes/transaction.routes.js
 
-```text
 POST /api/transactions/
 POST /api/transactions/system/initial-funds
-```
 
----
+📧 Services
 
-# 📧 Services
-
-## `src/services/email.service.js`
+src/services/email.service.js
 
 Centralized email functionality using Nodemailer.
 
 Functions:
 
-```javascript
 sendRegistrationEmail()
 sendTransactionEmail()
 sendTransactionFailureEmail()
-```
 
 The transporter uses Gmail OAuth2 credentials supplied through environment variables.
 
----
+🔌 API Documentation
 
-# 🔌 API Documentation
+Base URL
 
-## Base URL
-
-```text
 http://localhost:3000
-```
 
----
+1️⃣ Health Check
 
-## 1️⃣ Health Check
+Request
 
-### Request
-
-```http
 GET /
-```
 
-### Response
+Response
 
-```text
 Ledger Service is up and running
-```
 
----
+🔐 Authentication APIs
 
-# 🔐 Authentication APIs
+Register User
 
-## Register User
-
-```http
 POST /api/auth/register
 Content-Type: application/json
-```
 
-### Request Body
+Request Body
 
-```json
 {
   "name": "Bhupendra Singh",
   "email": "bhupendra@example.com",
   "password": "your-password"
 }
-```
 
-### Expected Success
+Expected Success
 
-```text
 HTTP 201 Created
-```
 
 The response contains the created user's basic information and a JWT token.
 
----
+Login User
 
-## Login User
-
-```http
 POST /api/auth/login
 Content-Type: application/json
-```
 
-### Request Body
+Request Body
 
-```json
 {
   "email": "bhupendra@example.com",
   "password": "your-password"
 }
-```
 
-### Expected Success
+Expected Success
 
-```text
 HTTP 200 OK
-```
 
----
+Logout User
 
-## Logout User
-
-```http
 POST /api/auth/logout
-```
 
 The server stores the token in the blacklist and clears the authentication cookie.
 
----
+🏦 Account APIs
 
-# 🏦 Account APIs
+Create Account
 
-## Create Account
-
-```http
 POST /api/accounts/
 Authorization: Bearer <JWT_TOKEN>
-```
 
 No request body is required.
 
-### Response
+Response
 
-```text
 HTTP 201 Created
-```
 
----
+Get User Accounts
 
-## Get User Accounts
-
-```http
 GET /api/accounts/
 Authorization: Bearer <JWT_TOKEN>
-```
 
 Returns accounts belonging to the authenticated user.
 
----
+Get Account Balance
 
-## Get Account Balance
-
-```http
 GET /api/accounts/balance/:accountId
 Authorization: Bearer <JWT_TOKEN>
-```
 
 Example:
 
-```text
 GET /api/accounts/balance/65f123456789abcdef123456
-```
 
-### Response Example
+Response Example
 
-```json
 {
   "accountId": "65f123456789abcdef123456",
   "balance": 6500
 }
-```
 
----
+💸 Transaction APIs
 
-# 💸 Transaction APIs
+Create Transaction
 
-## Create Transaction
-
-```http
 POST /api/transactions/
 Authorization: Bearer <JWT_TOKEN>
 Content-Type: application/json
-```
 
-### Request Body
+Request Body
 
-```json
 {
   "fromAccount": "SOURCE_ACCOUNT_ID",
   "toAccount": "DESTINATION_ACCOUNT_ID",
   "amount": 500,
   "idempotencyKey": "transfer-unique-001"
 }
-```
 
-### Processing
+Processing
 
-```text
 Request
   ↓
 Validation
@@ -942,35 +963,25 @@ COMPLETED Transaction
 Commit Session
   ↓
 Email Notification
-```
 
----
-
-## Initial Funds Transaction
+Initial Funds Transaction
 
 Only a system user is authorized to use this route.
 
-```http
 POST /api/transactions/system/initial-funds
 Authorization: Bearer <SYSTEM_USER_JWT_TOKEN>
 Content-Type: application/json
-```
 
-### Request Body
+Request Body
 
-```json
 {
   "toAccount": "DESTINATION_ACCOUNT_ID",
   "amount": 10000,
   "idempotencyKey": "initial-funds-001"
 }
-```
 
----
+🔄 Complete User Journey
 
-# 🔄 Complete User Journey
-
-```text
                     START
                       │
                       ▼
@@ -1008,13 +1019,9 @@ Content-Type: application/json
                       │
                       ▼
                     Logout
-```
 
----
+🗄️ Database Relationship
 
-# 🗄️ Database Relationship
-
-```text
 ┌───────────────┐
 │     User      │
 └───────┬───────┘
@@ -1039,143 +1046,115 @@ Content-Type: application/json
                     └───────────┬───────────┘
                                 ▼
                              Account
-```
 
-### Main Collections
+Main Collections
 
-```text
 users
 accounts
 transactions
 ledgers
 blacklists
-```
 
----
-
-# 🔒 Security Design
+🔒 Security Design
 
 The project implements several security-related mechanisms:
 
-### Password Security
+Password Security
 
 Passwords are hashed using:
 
-```text
 bcryptjs
-```
 
 Plain-text passwords are not intended to be stored.
 
-### JWT Authentication
+JWT Authentication
 
-JWT contains the authenticated user's ID and is signed using `JWT_SECRET`.
+JWT contains the authenticated user's ID and is signed using JWT_SECRET.
 
-### Token Blacklisting
+Token Blacklisting
 
 Logout invalidates the token by storing it in the blacklist collection.
 
-### Protected Routes
+Protected Routes
 
 Account and transaction operations require authentication.
 
-### System Authorization
+System Authorization
 
 The initial-funds endpoint requires system-user authorization.
 
-### Environment Variables
+Environment Variables
 
-Secrets and database credentials are loaded from `.env` rather than hard-coded in source files.
+Secrets and database credentials are loaded from .env rather than hard-coded in source files.
 
----
+⚙️ Installation & Setup
 
-# ⚙️ Installation & Setup
-
-## Prerequisites
+Prerequisites
 
 Install:
 
-- Node.js
-- npm
-- MongoDB / MongoDB Atlas
-- Gmail OAuth2 credentials if email functionality is required
-- Postman for API testing (recommended)
+Node.js
 
-## Step 1 — Clone
+npm
 
-```bash
+MongoDB / MongoDB Atlas
+
+Gmail OAuth2 credentials if email functionality is required
+
+Postman for API testing (recommended)
+
+Step 1 — Clone
+
 git clone https://github.com/bhupendrar1/Banking-Transaction-System-.git
-cd Banking-Transaction-System-
-```
+cd FinLedger
 
-## Step 2 — Install Dependencies
+Step 2 — Install Dependencies
 
-```bash
 npm install
-```
 
-## Step 3 — Configure `.env`
+Step 3 — Configure .env
 
-Create a `.env` file in the project root:
+Create a .env file in the project root:
 
-```env
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 EMAIL_USER=your_email_address
 CLIENT_ID=your_google_oauth_client_id
 CLIENT_SECRET=your_google_oauth_client_secret
 REFRESH_TOKEN=your_google_oauth_refresh_token
-```
 
-⚠️ **Never commit real secrets to GitHub.**
+⚠️ Never commit real secrets to GitHub.
 
-## Step 4 — Run Development Server
+Step 4 — Run Development Server
 
-```bash
 npm run dev
-```
 
-## Step 5 — Run Normal Server
+Step 5 — Run Normal Server
 
-```bash
 npm start
-```
 
 Server:
 
-```text
 http://localhost:3000
-```
 
----
+📦 Package Scripts
 
-# 📦 Package Scripts
+From package.json:
 
-From `package.json`:
-
-```bash
 npm run dev
-```
 
 Starts the server through Nodemon.
 
-```bash
 npm start
-```
 
 Starts the server using Node.js.
 
-```bash
 npm test
-```
 
 Currently configured as a placeholder test script and should be replaced with a real automated test suite.
 
----
+🧪 Recommended Postman Testing Order
 
-# 🧪 Recommended Postman Testing Order
-
-```text
 1. Register
         ↓
 2. Login
@@ -1197,44 +1176,53 @@ Currently configured as a placeholder test script and should be replaced with a 
 10. Check balances again
         ↓
 11. Logout
-```
 
----
-
-# ❌ Important Validation Scenarios
+❌ Important Validation Scenarios
 
 The API should be tested for cases such as:
 
-- Duplicate registration email
-- Invalid email format
-- Password shorter than the configured minimum
-- Invalid login credentials
-- Missing JWT token
-- Invalid JWT token
-- Blacklisted JWT token
-- Non-system user attempting system endpoint
-- Invalid source account
-- Invalid destination account
-- Frozen account
-- Closed account
-- Insufficient balance
-- Duplicate idempotency key
-- Missing transaction fields
-- Negative transaction amount
+Duplicate registration email
 
----
+Invalid email format
 
-# 🧠 Important Backend Concepts Demonstrated
+Password shorter than the configured minimum
+
+Invalid login credentials
+
+Missing JWT token
+
+Invalid JWT token
+
+Blacklisted JWT token
+
+Non-system user attempting system endpoint
+
+Invalid source account
+
+Invalid destination account
+
+Frozen account
+
+Closed account
+
+Insufficient balance
+
+Duplicate idempotency key
+
+Missing transaction fields
+
+Negative transaction amount
+
+🧠 Important Backend Concepts Demonstrated
 
 This project is useful as a backend learning and portfolio project because it demonstrates:
 
-### 1. REST API Design
+1. REST API Design
 
 Separate routes and controllers are used for authentication, accounts and transactions.
 
-### 2. MVC-style Organization
+2. MVC-style Organization
 
-```text
 Routes
   ↓
 Controllers
@@ -1242,68 +1230,77 @@ Controllers
 Models
   ↓
 MongoDB
-```
 
-### 3. Authentication
+3. Authentication
 
 JWT-based authentication with cookie and Bearer-token support.
 
-### 4. Authorization
+4. Authorization
 
 System-user-specific access control.
 
-### 5. Database Relationships
+5. Database Relationships
 
 MongoDB ObjectId references connect users, accounts, transactions and ledger entries.
 
-### 6. Aggregation
+6. Aggregation
 
 Account balance is calculated through MongoDB aggregation over ledger records.
 
-### 7. Database Transactions
+7. Database Transactions
 
 Transaction processing uses a MongoDB session and transaction.
 
-### 8. Idempotency
+8. Idempotency
 
 Unique idempotency keys help prevent duplicate transaction processing.
 
-### 9. Immutable Financial Records
+9. Immutable Financial Records
 
 Ledger entries are protected from modification/deletion.
 
-### 10. External Service Integration
+10. External Service Integration
 
 Nodemailer integrates email notification functionality.
 
----
-
-# 📈 Future Scope
+📈 Future Scope
 
 The current backend can be extended into a complete banking platform.
 
-### Backend
+Backend
 
-- [ ] Transaction history API
-- [ ] Transaction filtering by date/status/account
-- [ ] Pagination
-- [ ] Beneficiary management
-- [ ] Account statements
-- [ ] Scheduled transfers
-- [ ] Transaction reversal workflow
-- [ ] Stronger request validation
-- [ ] Rate limiting
-- [ ] Security headers
-- [ ] Structured logging
-- [ ] API versioning
-- [ ] Swagger/OpenAPI documentation
-- [ ] Automated unit and integration tests
+Transaction history API
 
-### Frontend
+Transaction filtering by date/status/account
+
+Pagination
+
+Beneficiary management
+
+Account statements
+
+Scheduled transfers
+
+Transaction reversal workflow
+
+Stronger request validation
+
+Rate limiting
+
+Security headers
+
+Structured logging
+
+API versioning
+
+Swagger/OpenAPI documentation
+
+Automated unit and integration tests
+
+Frontend
 
 A React-based banking dashboard could provide:
 
-```text
 Login
   ↓
 Dashboard
@@ -1314,66 +1311,56 @@ Dashboard
   ├── Transaction History
   ├── Profile
   └── Logout
-```
 
-### DevOps
+DevOps
 
-- [ ] Docker
-- [ ] CI/CD with GitHub Actions
-- [ ] Cloud deployment
-- [ ] Monitoring
-- [ ] Centralized logs
-- [ ] Production secret management
+Docker
 
----
+CI/CD with GitHub Actions
 
-# ⚠️ Development Notes
+Cloud deployment
 
-The project is a backend/educational banking simulation and should **not** be treated as production banking infrastructure without additional security, compliance, auditing, testing, concurrency controls, operational monitoring and financial-domain review.
+Monitoring
+
+Centralized logs
+
+Production secret management
+
+⚠️ Development Notes
+
+The project is a backend/educational banking simulation and should not be treated as production banking infrastructure without additional security, compliance, auditing, testing, concurrency controls, operational monitoring and financial-domain review.
 
 For production use, additional controls would be required around secure cookies, request validation, authorization boundaries, rate limiting, audit logging, concurrency/race-condition handling, secret management, observability, backups and regulatory requirements.
 
----
-
-# 🤝 Contribution
+🤝 Contribution
 
 Contributions are welcome.
 
-```bash
 git checkout -b feature/your-feature
-```
 
 Make your changes, test them, commit them, and open a pull request.
 
 Example:
 
-```bash
 git add .
 git commit -m "feat: add transaction history"
 git push origin feature/your-feature
-```
 
----
+👨‍💻 Author
 
-# 👨‍💻 Author
-
-**Bhupendra Singh**
+Bhupendra Singh
 
 B.Tech CSE | Backend / Full-Stack Developer
 
-GitHub: **@bhupendrar1**
+GitHub: @bhupendrar1
 
-Repository: **Banking-Transaction-System-**
+Repository: Banking-Transaction-System-
 
----
+📄 License
 
-# 📄 License
-
-This project is licensed under the **ISC License**.
-
----
+This project is licensed under the ISC License.
 
 <p align="center">
-  <strong>🏦 Banking Transaction System</strong><br />
+  <strong>🏦 FinLedger — Secure Financial Transaction Platform</strong><br />
   Built with Node.js • Express.js • MongoDB • Mongoose • JWT
 </p>
